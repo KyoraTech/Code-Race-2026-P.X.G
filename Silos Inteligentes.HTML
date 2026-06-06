@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Silos Inteligentes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── VARIÁVEIS ── */
+    :root {
+      --ouro:      #C9A84C;
+      --ouro-claro:#E8C97A;
+      --verde:     #1B3A2D;
+      --verde-med: #2D5A44;
+      --verde-claro:#3D7A5C;
+      --terra:     #6B4226;
+      --areia:     #F5EDD6;
+      --grafite:   #1A1A1A;
+      --fundo:     #0E1E17;
+      --branco:    #F9F5EC;
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--fundo);
+      color: var(--branco);
+      font-family: 'Libre Baskerville', Georgia, serif;
+      overflow-x: hidden;
+    }
+
+    /* ── FUNDO TEXTURIZADO ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(201,168,76,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 90%, rgba(45,90,68,0.12) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--ouro), transparent);
+    }
+
+    /* Silo SVG decorativo de fundo */
+    .silo-bg {
+      position: absolute;
+      right: -60px;
+      bottom: 0;
+      width: 340px;
+      opacity: 0.07;
+      pointer-events: none;
+      animation: floatSilo 8s ease-in-out infinite;
+    }
+
+    .silo-bg-left {
+      left: -80px;
+      right: auto;
+      width: 280px;
+      opacity: 0.05;
+      animation-delay: -3s;
+    }
+
+    @keyframes floatSilo {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-18px); }
+    }
+
+    .tag-topo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--ouro);
+      text-transform: uppercase;
+      border: 1px solid rgba(201,168,76,0.35);
+      padding: 0.35rem 1rem;
+      border-radius: 2px;
+      margin-bottom: 2rem;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      background: linear-gradient(135deg, var(--ouro-claro) 0%, var(--ouro) 40%, #8B6914 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeDown 0.9s ease 0.1s both;
+    }
+
+    .hero h1 span {
+      display: block;
+      font-size: clamp(2.5rem, 7vw, 6rem);
+      background: linear-gradient(135deg, var(--verde-claro) 0%, #6BBF91 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      margin-top: 1.5rem;
+      max-width: 640px;
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: rgba(249,245,236,0.72);
+      animation: fadeDown 1s ease 0.2s both;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 2.5rem;
+      animation: fadeDown 1s ease 0.35s both;
+    }
+
+    .badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      padding: 0.4rem 0.85rem;
+      border-radius: 2px;
+      text-transform: uppercase;
+      border: 1px solid;
+    }
+
+    .badge-ouro  { border-color: var(--ouro);       color: var(--ouro);       background: rgba(201,168,76,0.08); }
+    .badge-verde { border-color: var(--verde-claro); color: var(--verde-claro); background: rgba(61,122,92,0.1);  }
+
+    /* ── SEÇÃO GENÉRICA ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--ouro);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(201,168,76,0.4), transparent);
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      letter-spacing: 0.03em;
+      color: var(--areia);
+      margin-bottom: 1.5rem;
+      line-height: 1;
+    }
+
+    h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+      color: var(--ouro-claro);
+      margin-bottom: 0.6rem;
+    }
+
+    p {
+      line-height: 1.85;
+      color: rgba(249,245,236,0.80);
+      margin-bottom: 1rem;
+    }
+
+    /* ── CARDS ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .card {
+      background: linear-gradient(145deg, rgba(27,58,45,0.6), rgba(14,30,23,0.8));
+      border: 1px solid rgba(201,168,76,0.18);
+      border-radius: 4px;
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(201,168,76,0.5);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(201,168,76,0.08);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--ouro), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    /* ── DIVISOR ── */
+    .divisor {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+      margin: 0 auto;
+    }
+
+    /* ── DESTAQUE / CALLOUT ── */
+    .callout {
+      background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(27,58,45,0.4));
+      border-left: 3px solid var(--ouro);
+      border-radius: 0 4px 4px 0;
+      padding: 1.5rem 2rem;
+      margin: 2rem 0;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--areia);
+      line-height: 1.8;
+    }
+
+    /* ── LISTA ESTILIZADA ── */
+    .lista-custom {
+      list-style: none;
+      margin: 1.25rem 0;
+    }
+
+    .lista-custom li {
+      padding: 0.6rem 0 0.6rem 2rem;
+      position: relative;
+      color: rgba(249,245,236,0.80);
+      line-height: 1.7;
+      border-bottom: 1px solid rgba(201,168,76,0.07);
+    }
+
+    .lista-custom li:last-child { border-bottom: none; }
+
+    .lista-custom li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--ouro);
+      font-size: 0.85rem;
+    }
+
+    /* ── GRID TECNOLOGIAS ── */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+
+    .tech-card {
+      background: rgba(14,30,23,0.7);
+      border: 1px solid rgba(61,122,92,0.3);
+      border-radius: 4px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .tech-card:hover {
+      border-color: var(--verde-claro);
+      background: rgba(45,90,68,0.3);
+    }
+
+    .tech-card .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--verde-claro);
+      text-transform: uppercase;
+    }
+
+    /* ── BARRA ESTATÍSTICAS ── */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin: 3rem 0;
+      justify-content: center;
+    }
+
+    .stat {
+      text-align: center;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--ouro-claro), var(--ouro));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      color: rgba(249,245,236,0.5);
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    /* ── SENSOR ANIMADO ── */
+    .sensor-demo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin: 2.5rem 0;
+      align-items: stretch;
+    }
+
+    .sensor-box {
+      flex: 1;
+      min-width: 200px;
+      background: rgba(14,30,23,0.9);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 4px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sensor-titulo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: rgba(249,245,236,0.45);
+      text-transform: uppercase;
+    }
+
+    .sensor-valor {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.4rem;
+      font-weight: 600;
+      color: var(--ouro-claro);
+      animation: pulse-val 3s ease-in-out infinite;
+    }
+
+    .sensor-valor.verde { color: #6BBF91; }
+    .sensor-valor.alerta { color: #E87A3C; animation: blink-alert 1s step-end infinite; }
+
+    @keyframes pulse-val {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.75; }
+    }
+
+    @keyframes blink-alert {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    .sensor-barra-wrap {
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 0.4rem;
+    }
+
+    .sensor-barra {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1s ease;
+    }
+
+    .sensor-barra.temp  { width: 42%; background: linear-gradient(90deg, var(--ouro), #E87A3C); }
+    .sensor-barra.umid  { width: 61%; background: linear-gradient(90deg, var(--verde-claro), #6BBF91); }
+    .sensor-barra.co2   { width: 28%; background: linear-gradient(90deg, #5B8FD4, #9AC4F8); }
+    .sensor-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      margin-top: 0.3rem;
+    }
+    .ok     { color: #6BBF91; }
+    .alerta { color: #E87A3C; }
+
+    /* ── FUTURO ── */
+    .futuro-wrap {
+      background: linear-gradient(135deg, rgba(27,58,45,0.5), rgba(107,64,38,0.15));
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 6px;
+      padding: 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin-top: 2rem;
+    }
+
+    .futuro-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 40% at 50% 50%, rgba(201,168,76,0.06), transparent);
+      pointer-events: none;
+    }
+
+    .futuro-wrap p { max-width: 700px; margin: 0 auto 1rem; }
+
+    /* ── RODAPÉ ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(201,168,76,0.15);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      color: rgba(249,245,236,0.3);
+      text-transform: uppercase;
+    }
+
+    footer span { color: var(--ouro); }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── ANIMAÇÕES ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVO ── */
+    @media (max-width: 640px) {
+      section { padding: 3.5rem 1.25rem; }
+      .card-grid { grid-template-columns: 1fr; }
+      .stats-row { gap: 1.25rem; }
+      .sensor-demo { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ████ HERO ████ -->
+<section class="hero" style="max-width:100%; padding-top:7rem;">
+  <!-- Silos decorativos SVG -->
+  <svg class="silo-bg" viewBox="0 0 200 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="100" cy="60" rx="80" ry="25" stroke="white" stroke-width="2"/>
+    <rect x="20" y="60" width="160" height="280" stroke="white" stroke-width="2"/>
+    <ellipse cx="100" cy="340" rx="80" ry="25" stroke="white" stroke-width="2"/>
+    <line x1="100" y1="60" x2="100" y2="340" stroke="white" stroke-width="1" stroke-dasharray="8 6"/>
+    <line x1="60"  y1="60" x2="60"  y2="340" stroke="white" stroke-width="1" opacity="0.5"/>
+    <line x1="140" y1="60" x2="140" y2="340" stroke="white" stroke-width="1" opacity="0.5"/>
+    <rect x="85" y="320" width="30" height="55" stroke="white" stroke-width="1.5"/>
+    <circle cx="160" cy="120" r="6" stroke="white" stroke-width="1.5"/>
+    <circle cx="160" cy="180" r="6" stroke="white" stroke-width="1.5"/>
+    <circle cx="160" cy="240" r="6" stroke="white" stroke-width="1.5"/>
+  </svg>
+  <svg class="silo-bg silo-bg-left" viewBox="0 0 200 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="100" cy="60" rx="80" ry="25" stroke="white" stroke-width="2"/>
+    <rect x="20" y="60" width="160" height="280" stroke="white" stroke-width="2"/>
+    <ellipse cx="100" cy="340" rx="80" ry="25" stroke="white" stroke-width="2"/>
+    <rect x="85" y="320" width="30" height="55" stroke="white" stroke-width="1.5"/>
+  </svg>
+
+  <div class="tag-topo">⬡ Agro + Tecnologia + Futuro</div>
+
+  <h1>
+    Silos
+    <span>Inteligentes</span>
+  </h1>
+
+  <p class="hero-sub">
+    Sensores, IoT e Inteligência Artificial a serviço da conservação de grãos —
+    transformando armazéns em centros tecnológicos que garantem segurança alimentar
+    e produtividade no campo.
+  </p>
+
+  <div class="hero-badges">
+    <span class="badge badge-ouro">Monitoramento em tempo real</span>
+    <span class="badge badge-verde">IoT & IA</span>
+    <span class="badge badge-ouro">Aeração Automática</span>
+    <span class="badge badge-verde">Sustentabilidade</span>
+    <span class="badge badge-ouro">Segurança Alimentar</span>
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- ████ O QUE SÃO ████ -->
+<section id="intro">
+  <div class="section-label">01 — Visão Geral</div>
+  <h2>O que são silos inteligentes?</h2>
+
+  <p>
+    Após a colheita, os grãos podem permanecer armazenados por meses antes da comercialização.
+    Durante esse período, pequenas variações de temperatura e umidade podem causar grandes prejuízos.
+    Os <strong style="color:var(--ouro-claro)">silos inteligentes</strong> utilizam sensores para o
+    monitoramento contínuo dessas variáveis, permitindo identificar alterações rapidamente e prevenir
+    o surgimento de fungos, pragas e processos de deterioração.
+  </p>
+
+  <div class="callout">
+    "Sensores instalados dentro do silo coletam dados em tempo real sobre o ambiente e os enviam para
+    computadores ou aplicativos. Caso a temperatura ou a umidade atinjam níveis inadequados, o sistema
+    pode emitir alertas ou até acionar equipamentos automaticamente — como ventiladores e sistemas de aeração."
+  </div>
+
+  <p>
+    Sem controle adequado, os grãos armazenados estão sujeitos a aumento de umidade, aquecimento
+    excessivo, desenvolvimento de fungos e bactérias, ataque de insetos e pragas, e perda de qualidade
+    nutricional e comercial — comprometendo toneladas de alimento e causando prejuízos significativos.
+  </p>
+</section>
+
+<!-- ████ PAINEL DE SENSORES SIMULADO ████ -->
+<section id="sensores" style="padding-top:0;">
+  <div class="section-label">02 — Leitura ao Vivo</div>
+  <h2>Painel de Sensores</h2>
+  <p>Simulação de leitura em tempo real de um silo monitorado por IoT.</p>
+
+  <div class="sensor-demo">
+    <div class="sensor-box">
+      <span class="sensor-titulo">🌡 Temperatura interna</span>
+      <span class="sensor-valor" id="val-temp">24,3 °C</span>
+      <div class="sensor-barra-wrap">
+        <div class="sensor-barra temp" id="bar-temp"></div>
+      </div>
+      <span class="sensor-status ok" id="st-temp">▸ NORMAL — dentro da faixa ideal</span>
+    </div>
+
+    <div class="sensor-box">
+      <span class="sensor-titulo">💧 Umidade relativa</span>
+      <span class="sensor-valor verde" id="val-umid">13,8 %</span>
+      <div class="sensor-barra-wrap">
+        <div class="sensor-barra umid" id="bar-umid"></div>
+      </div>
+      <span class="sensor-status ok" id="st-umid">▸ NORMAL — grãos conservados</span>
+    </div>
+
+    <div class="sensor-box">
+      <span class="sensor-titulo">🌬 CO₂ (indicador de atividade)</span>
+      <span class="sensor-valor verde" id="val-co2">320 ppm</span>
+      <div class="sensor-barra-wrap">
+        <div class="sensor-barra co2" id="bar-co2"></div>
+      </div>
+      <span class="sensor-status ok" id="st-co2">▸ ESTÁVEL — sem indício de fungos</span>
+    </div>
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- ████ BENEFÍCIOS ████ -->
+<section id="beneficios">
+  <div class="section-label">03 — Principais Benefícios</div>
+  <h2>Por que adotar a tecnologia?</h2>
+
+  <div class="card-grid">
+    <div class="card reveal">
+      <span class="card-icon">🛡️</span>
+      <h3>Redução de Perdas</h3>
+      <p>Evita a proliferação de fungos, insetos e outros agentes que podem estragar os grãos, preservando a produção após a colheita.</p>
+    </div>
+    <div class="card reveal">
+      <span class="card-icon">🌾</span>
+      <h3>Maior Qualidade</h3>
+      <p>Os produtos permanecem conservados por mais tempo, mantendo valor nutricional e comercial até a comercialização.</p>
+    </div>
+    <div class="card reveal">
+      <span class="card-icon">💰</span>
+      <h3>Economia Real</h3>
+      <p>Diminui prejuízos causados pelo armazenamento inadequado. A redução das perdas geralmente compensa o investimento ao longo do tempo.</p>
+    </div>
+    <div class="card reveal">
+      <span class="card-icon">📱</span>
+      <h3>Monitoramento Remoto</h3>
+      <p>O produtor pode acompanhar as condições do silo pelo celular ou computador, de qualquer lugar, a qualquer hora.</p>
+    </div>
+    <div class="card reveal">
+      <span class="card-icon">⚡</span>
+      <h3>Decisão Rápida</h3>
+      <p>Problemas são identificados antes que causem danos significativos, permitindo intervenção imediata e automática.</p>
+    </div>
+    <div class="card reveal">
+      <span class="card-icon">🌿</span>
+      <h3>Sustentabilidade</h3>
+      <p>Ao reduzir perdas, evita o desperdício de água, energia, fertilizantes e mão de obra utilizados na produção agrícola.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ████ ESTATÍSTICAS ████ -->
+<section style="padding-top:0;">
+  <div class="stats-row">
+    <div class="stat reveal">
+      <div class="stat-num">30%</div>
+      <div class="stat-label">Redução potencial de perdas pós-colheita</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">Monitoramento contínuo automático</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">98%</div>
+      <div class="stat-label">Precisão dos sensores de última geração</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">IoT</div>
+      <div class="stat-label">Conectividade em tempo real</div>
+    </div>
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- ████ TECNOLOGIAS ████ -->
+<section id="tecnologias">
+  <div class="section-label">04 — Tecnologias Utilizadas</div>
+  <h2>O Arsenal Tecnológico</h2>
+  <p>Os silos inteligentes contam com diversas tecnologias integradas que trabalham em conjunto:</p>
+
+  <div class="tech-grid">
+    <div class="tech-card reveal">
+      <span class="mono">Sensor 01</span>
+      <h3>Temperatura</h3>
+      <p>Detectam pontos de aquecimento que podem indicar deterioração dos grãos, mapeando toda a massa armazenada.</p>
+    </div>
+    <div class="tech-card reveal">
+      <span class="mono">Sensor 02</span>
+      <h3>Umidade</h3>
+      <p>Monitoram a quantidade de água presente no ambiente e nos próprios grãos armazenados continuamente.</p>
+    </div>
+    <div class="tech-card reveal">
+      <span class="mono">Rede 01</span>
+      <h3>Internet das Coisas (IoT)</h3>
+      <p>Conecta os sensores a uma rede, permitindo o envio de informações em tempo real para qualquer dispositivo.</p>
+    </div>
+    <div class="tech-card reveal">
+      <span class="mono">IA 01</span>
+      <h3>Inteligência Artificial</h3>
+      <p>Em sistemas avançados, analisa os dados coletados e prevê possíveis problemas antes que aconteçam.</p>
+    </div>
+    <div class="tech-card reveal">
+      <span class="mono">App 01</span>
+      <h3>Plataformas Digitais</h3>
+      <p>Aplicativos e dashboards que permitem ao produtor acompanhar tudo pelo celular ou computador.</p>
+    </div>
+    <div class="tech-card reveal">
+      <span class="mono">Mec 01</span>
+      <h3>Aeração Automática</h3>
+      <p>Ventiladores acionados automaticamente pelos sensores para circular o ar e manter condições ideais.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- ████ AERAÇÃO ████ -->
+<section id="aeracao">
+  <div class="section-label">05 — Funcionamento</div>
+  <h2>Aeração Inteligente</h2>
+
+  <p>
+    Uma das funções mais importantes dos silos inteligentes é o <strong style="color:var(--ouro-claro)">controle automático da aeração</strong>.
+    Quando os sensores detectam aumento de temperatura ou umidade, ventiladores são acionados para
+    circular o ar dentro do silo, mantendo os grãos em condições ideais de conservação.
+  </p>
+
+  <div class="callout">
+    Esse processo evita a formação de áreas quentes, conhecidas como
+    <strong>"bolsões de calor"</strong> — zonas que favorecem diretamente o surgimento de fungos e insetos
+    prejudiciais à qualidade dos grãos.
+  </div>
+
+  <h3 style="margin-top:2rem;">O que pode ocorrer sem controle</h3>
+  <ul class="lista-custom">
+    <li>Aumento progressivo da umidade na massa de grãos</li>
+    <li>Aquecimento excessivo gerando "bolsões de calor"</li>
+    <li>Desenvolvimento acelerado de fungos e bactérias</li>
+    <li>Ataque de insetos e pragas oportunistas</li>
+    <li>Perda irreversível de qualidade nutricional e comercial</li>
+  </ul>
+</section>
+
+<div class="divisor"></div>
+
+<!-- ████ IMPACTO ECONÔMICO ████ -->
+<section id="economia">
+  <div class="section-label">06 — Impacto Econômico</div>
+  <h2>Ganhos Para o Produtor</h2>
+  <p>
+    As perdas pós-colheita representam um dos maiores desafios da agricultura mundial.
+    Com os silos inteligentes, os produtores conseguem transformar esse cenário:
+  </p>
+
+  <div class="card-grid" style="margin-top:1.5rem;">
+    <div class="card reveal">
+      <span class="card-icon">📉</span>
+      <h3>Menos Desperdício</h3>
+      <p>Redução significativa no volume de grãos perdidos durante o armazenamento prolongado.</p>
+    </div>
+    <div class="card reveal">
+      <span class="card-icon">💎</span>
+      <h3>Valor Preservado</h3>
+      <p>Grãos com melhor qualidade atingem preços mais elevados no momento da venda.</p>
+    </div>
+    <div class="card reveal">
+      <span class="card-icon">🐛</span>
+      <h3>Menos Pragas</h3>
+      <p>Controle preventivo reduz drasticamente os gastos com fumigação e controle de pragas.</p>
+    </div>
+    <div class="card reveal">
+      <span class="card-icon">📊</span>
+      <h3>Planejamento Melhor</h3>
+      <p>Dados históricos e em tempo real permitem planejar com precisão a comercialização da produção.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- ████ DESAFIOS ████ -->
+<section id="desafios">
+  <div class="section-label">07 — Desafios</div>
+  <h2>Obstáculos na Implantação</h2>
+  <p>
+    Apesar das vantagens, a implantação exige planejamento e investimento inicial. Os principais
+    desafios incluem:
+  </p>
+
+  <ul class="lista-custom">
+    <li><strong style="color:var(--ouro-claro)">Investimento em equipamentos e sensores</strong> — custo inicial pode ser elevado para pequenos produtores</li>
+    <li><strong style="color:var(--ouro-claro)">Infraestrutura de internet</strong> — conectividade confiável é essencial para o funcionamento em tempo real</li>
+    <li><strong style="color:var(--ouro-claro)">Manutenção periódica</strong> — sensores e sistemas eletrônicos requerem calibração e cuidados regulares</li>
+    <li><strong style="color:var(--ouro-claro)">Capacitação técnica</strong> — operadores precisam compreender as ferramentas digitais disponíveis</li>
+  </ul>
+
+  <div class="callout" style="margin-top:2rem;">
+    No entanto, a redução das perdas gerada pelo monitoramento inteligente geralmente
+    <strong>compensa o custo ao longo do tempo</strong> — tornando o investimento vantajoso para produtores
+    de diferentes portes.
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- ████ FUTURO ████ -->
+<section id="futuro">
+  <div class="section-label">08 — Perspectivas</div>
+  <h2>O Futuro dos Silos Inteligentes</h2>
+
+  <div class="futuro-wrap reveal">
+    <p>
+      A tendência é que esses sistemas se tornem cada vez mais <strong style="color:var(--ouro-claro)">automatizados e autônomos</strong>.
+      Com o avanço da inteligência artificial e da análise de dados, os silos poderão prever riscos com
+      maior precisão, gerar relatórios automáticos e tomar decisões sem intervenção humana.
+    </p>
+    <p style="margin-top:1rem; margin-bottom:0;">
+      Dessa forma, os silos inteligentes não são apenas locais de armazenamento — são
+      <strong style="color:var(--verde-claro)">verdadeiros centros tecnológicos</strong> que ajudam a garantir
+      a segurança alimentar, aumentar a produtividade agrícola e tornar o agronegócio mais eficiente e sustentável.
+    </p>
+    <div style="margin-top:2rem;">
+      <span class="badge badge-ouro" style="margin-right:.5rem; display:inline-block; margin-bottom:.5rem;">IA Preditiva</span>
+      <span class="badge badge-verde" style="margin-right:.5rem; display:inline-block; margin-bottom:.5rem;">Relatórios Automáticos</span>
+      <span class="badge badge-ouro" style="margin-right:.5rem; display:inline-block; margin-bottom:.5rem;">Decisão Autônoma</span>
+      <span class="badge badge-verde" style="display:inline-block; margin-bottom:.5rem;">Segurança Alimentar Global</span>
+    </div>
+  </div>
+</section>
+
+<!-- ████ RODAPÉ ████ -->
+<footer>
+  <p>⬡ <span>Silos Inteligentes</span> — Agronegócio & Tecnologia &nbsp;|&nbsp; Monitoramento Contínuo 24/7 &nbsp;|&nbsp; IoT · IA · Sustentabilidade</p>
+</footer>
+
+<!-- ████ SCRIPTS ████ -->
+<script>
+  // ── Scroll Reveal ──
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.transitionDelay = (i * 0.05) + 's';
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+
+  // ── Simulação de sensores ──
+  function rand(min, max, dec = 1) {
+    return (Math.random() * (max - min) + min).toFixed(dec);
+  }
+
+  function updateSensors() {
+    const temp = parseFloat(rand(20, 32));
+    const umid = parseFloat(rand(11, 18));
+    const co2  = parseInt(rand(300, 600, 0));
+
+    const tempEl = document.getElementById('val-temp');
+    const umidEl = document.getElementById('val-umid');
+    const co2El  = document.getElementById('val-co2');
+    const stTemp = document.getElementById('st-temp');
+    const stUmid = document.getElementById('st-umid');
+    const stCo2  = document.getElementById('st-co2');
+    const barTemp = document.getElementById('bar-temp');
+    const barUmid = document.getElementById('bar-umid');
+    const barCo2  = document.getElementById('bar-co2');
+
+    tempEl.textContent = temp.toFixed(1).replace('.', ',') + ' °C';
+    umidEl.textContent = umid.toFixed(1).replace('.', ',') + ' %';
+    co2El.textContent  = co2 + ' ppm';
+
+    // Temperatura: ideal 15–25 °C
+    if (temp > 28) {
+      tempEl.className = 'sensor-valor alerta';
+      stTemp.textContent = '⚠ ALERTA — temperatura elevada! Ventilação acionada.';
+      stTemp.className = 'sensor-status alerta';
+    } else {
+      tempEl.className = 'sensor-valor';
+      stTemp.textContent = '▸ NORMAL — dentro da faixa ideal';
+      stTemp.className = 'sensor-status ok';
+    }
+
+    // Umidade: ideal < 14 %
+    if (umid > 15) {
+      umidEl.className = 'sensor-valor alerta';
+      stUmid.textContent = '⚠ ALERTA — umidade elevada! Risco de fungos.';
+      stUmid.className = 'sensor-status alerta';
+    } else {
+      umidEl.className = 'sensor-valor verde';
+      stUmid.textContent = '▸ NORMAL — grãos conservados';
+      stUmid.className = 'sensor-status ok';
+    }
+
+    // CO₂: alerta > 500 ppm
+    if (co2 > 500) {
+      co2El.className = 'sensor-valor alerta';
+      stCo2.textContent = '⚠ ALERTA — CO₂ alto! Possível atividade fúngica.';
+      stCo2.className = 'sensor-status alerta';
+    } else {
+      co2El.className = 'sensor-valor verde';
+      stCo2.textContent = '▸ ESTÁVEL — sem indício de fungos';
+      stCo2.className = 'sensor-status ok';
+    }
+
+    // Barras
+    barTemp.style.width = Math.min(100, ((temp - 15) / 25) * 100) + '%';
+    barUmid.style.width = Math.min(100, (umid / 20) * 100) + '%';
+    barCo2.style.width  = Math.min(100, (co2 / 700) * 100) + '%';
+  }
+
+  setInterval(updateSensors, 2800);
+  updateSensors();
+</script>
+
+</body>
+</html>
