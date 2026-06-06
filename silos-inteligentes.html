@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Silos Inteligentes</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --verde: #1a3d1f;
+  --verde-medio: #2d5a35;
+  --verde-claro: #3d7a47;
+  --verde-suave: #4a9258;
+  --amarelo: #c8922a;
+  --amarelo-claro: #e0a93a;
+  --amarelo-dourado: #f0c040;
+  --branco: #f5f0e8;
+  --branco-puro: #ffffff;
+  --cinza-claro: #e8e0d0;
+  --texto-escuro: #1a1a1a;
+  --sombra: rgba(0,0,0,0.25);
+  --verde-trans: rgba(26,61,31,0.92);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--verde);
+  color: var(--branco);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ====== TELA DE LOGIN ====== */
+#tela-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0e2412 0%, #1a3d1f 40%, #2d5a35 100%);
+  position: relative;
+}
+
+#tela-login::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg, transparent, transparent 60px,
+    rgba(200,146,42,0.04) 60px, rgba(200,146,42,0.04) 61px
+  ), repeating-linear-gradient(
+    90deg, transparent, transparent 60px,
+    rgba(200,146,42,0.04) 60px, rgba(200,146,42,0.04) 61px
+  );
+  pointer-events: none;
+}
+
+.login-box {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(200,146,42,0.3);
+  border-radius: 20px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 440px;
+  backdrop-filter: blur(12px);
+  position: relative;
+  z-index: 1;
+}
+
+.logo-area {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.logo-icon {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, var(--amarelo), var(--amarelo-dourado));
+  border-radius: 18px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+}
+
+.logo-area h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--amarelo-dourado);
+  letter-spacing: 0.5px;
+}
+
+.logo-area p {
+  font-size: 13px;
+  color: rgba(245,240,232,0.6);
+  margin-top: 4px;
+}
+
+.tabs-login {
+  display: flex;
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 28px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: none;
+  color: rgba(245,240,232,0.5);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-btn.ativo {
+  background: var(--amarelo);
+  color: var(--verde);
+}
+
+.campo {
+  margin-bottom: 16px;
+}
+
+.campo label {
+  display: block;
+  font-size: 13px;
+  color: rgba(245,240,232,0.7);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.campo input, .campo select {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(200,146,42,0.25);
+  border-radius: 10px;
+  color: var(--branco);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.campo input:focus, .campo select:focus {
+  border-color: var(--amarelo);
+}
+
+.campo input::placeholder { color: rgba(245,240,232,0.3); }
+.campo select option { background: var(--verde); color: var(--branco); }
+
+.btn-principal {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--amarelo), var(--amarelo-claro));
+  border: none;
+  border-radius: 10px;
+  color: var(--verde);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-principal:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(200,146,42,0.4);
+}
+
+.mensagem-erro {
+  background: rgba(220,50,50,0.15);
+  border: 1px solid rgba(220,50,50,0.4);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #ff9999;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.silos-cadastro {
+  margin-top: 12px;
+}
+
+.silo-cadastro-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.silo-cadastro-item input {
+  flex: 1;
+}
+
+.btn-remover-silo {
+  background: rgba(220,50,50,0.2);
+  border: 1px solid rgba(220,50,50,0.3);
+  border-radius: 8px;
+  color: #ff9999;
+  padding: 0 12px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  transition: background 0.2s;
+}
+
+.btn-remover-silo:hover { background: rgba(220,50,50,0.35); }
+
+.btn-adicionar-silo {
+  background: rgba(200,146,42,0.1);
+  border: 1px dashed rgba(200,146,42,0.4);
+  border-radius: 8px;
+  color: var(--amarelo-claro);
+  padding: 10px;
+  width: 100%;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.btn-adicionar-silo:hover { background: rgba(200,146,42,0.2); }
+
+/* ====== APP PRINCIPAL ====== */
+#app {
+  display: none;
+  min-height: 100vh;
+  background: #0f2412;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 260px;
+  background: linear-gradient(180deg, #1a3d1f 0%, #152f1a 100%);
+  border-right: 1px solid rgba(200,146,42,0.15);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-logo {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(200,146,42,0.12);
+}
+
+.sidebar-logo h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: var(--amarelo-dourado);
+}
+
+.sidebar-logo p {
+  font-size: 11px;
+  color: rgba(245,240,232,0.45);
+  margin-top: 2px;
+}
+
+.sidebar-usuario {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(200,146,42,0.12);
+}
+
+.usuario-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  background: var(--amarelo);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--verde);
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.usuario-info { overflow: hidden; }
+.usuario-nome {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--branco);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fazenda-nome {
+  font-size: 11px;
+  color: rgba(245,240,232,0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-secao {
+  padding: 16px 12px 8px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.secao-titulo {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(245,240,232,0.35);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 0 8px;
+  margin-bottom: 6px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: rgba(245,240,232,0.6);
+  font-size: 14px;
+  border: 1px solid transparent;
+  margin-bottom: 2px;
+  width: 100%;
+  background: none;
+  text-align: left;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.sidebar-item:hover {
+  background: rgba(200,146,42,0.08);
+  color: var(--branco);
+}
+
+.sidebar-item.ativo {
+  background: rgba(200,146,42,0.15);
+  border-color: rgba(200,146,42,0.25);
+  color: var(--amarelo-claro);
+}
+
+.sidebar-item-icone {
+  font-size: 18px;
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.sidebar-item .status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.status-dot.ok { background: #4caf50; }
+.status-dot.alerta { background: #ff9800; animation: piscar 1s infinite; }
+.status-dot.critico { background: #f44336; animation: piscar 0.5s infinite; }
+
+@keyframes piscar {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.sidebar-rodape {
+  padding: 12px;
+  border-top: 1px solid rgba(200,146,42,0.12);
+}
+
+.btn-sair-destaque {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #ffaaaa;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(220,50,50,0.35);
+  background: rgba(220,50,50,0.1);
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.btn-sair-destaque:hover {
+  background: rgba(220,50,50,0.25);
+  border-color: rgba(220,50,50,0.6);
+  color: #ff8888;
+  transform: translateY(-1px);
+}
+
+.btn-trocar-conta {
+  background: none;
+  border: none;
+  color: rgba(245,240,232,0.35);
+  font-size: 11px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: color 0.2s;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.btn-trocar-conta:hover { color: rgba(245,240,232,0.65); }
+
+/* Conteúdo principal */
+.main-content {
+  margin-left: 260px;
+  padding: 28px;
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.topbar-titulo h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: var(--amarelo-dourado);
+}
+
+.topbar-titulo p {
+  font-size: 13px;
+  color: rgba(245,240,232,0.5);
+  margin-top: 2px;
+}
+
+.topbar-acoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-secundario {
+  padding: 10px 18px;
+  background: rgba(200,146,42,0.1);
+  border: 1px solid rgba(200,146,42,0.3);
+  border-radius: 10px;
+  color: var(--amarelo-claro);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secundario:hover {
+  background: rgba(200,146,42,0.2);
+}
+
+.ultimo-update {
+  font-size: 12px;
+  color: rgba(245,240,232,0.4);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pulso {
+  width: 8px; height: 8px;
+  background: #4caf50;
+  border-radius: 50%;
+  animation: pulse-verde 2s infinite;
+}
+
+@keyframes pulse-verde {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+/* Resumo geral */
+.cards-resumo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.card-resumo {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(200,146,42,0.15);
+  border-radius: 14px;
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-resumo::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 14px 14px 0 0;
+}
+
+.card-resumo.verde::before { background: linear-gradient(90deg, #4caf50, #66bb6a); }
+.card-resumo.amarelo::before { background: linear-gradient(90deg, var(--amarelo), var(--amarelo-claro)); }
+.card-resumo.azul::before { background: linear-gradient(90deg, #2196f3, #42a5f5); }
+.card-resumo.laranja::before { background: linear-gradient(90deg, #ff9800, #ffb74d); }
+
+.card-resumo-label {
+  font-size: 11px;
+  color: rgba(245,240,232,0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.card-resumo-valor {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: var(--branco);
+  line-height: 1;
+}
+
+.card-resumo-sub {
+  font-size: 12px;
+  color: rgba(245,240,232,0.4);
+  margin-top: 6px;
+}
+
+/* Grid de silos */
+.silos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.silo-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(200,146,42,0.15);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.silo-card:hover {
+  border-color: rgba(200,146,42,0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.silo-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(200,146,42,0.1);
+}
+
+.silo-card-nome {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.silo-icone {
+  width: 36px; height: 36px;
+  background: rgba(200,146,42,0.15);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.silo-card-titulo {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--branco);
+}
+
+.silo-card-id {
+  font-size: 11px;
+  color: rgba(245,240,232,0.4);
+}
+
+.badge-status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.badge-status.normal {
+  background: rgba(76,175,80,0.15);
+  color: #81c784;
+  border: 1px solid rgba(76,175,80,0.25);
+}
+
+.badge-status.alerta {
+  background: rgba(255,152,0,0.15);
+  color: #ffb74d;
+  border: 1px solid rgba(255,152,0,0.25);
+}
+
+.badge-status.critico {
+  background: rgba(244,67,54,0.15);
+  color: #ef9a9a;
+  border: 1px solid rgba(244,67,54,0.25);
+}
+
+.badge-status.ventilacao {
+  background: rgba(33,150,243,0.15);
+  color: #90caf9;
+  border: 1px solid rgba(33,150,243,0.25);
+  animation: piscar 1.5s infinite;
+}
+
+.silo-card-body {
+  padding: 16px 18px;
+}
+
+.sensores-linha {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.sensor-item {
+  text-align: center;
+}
+
+.sensor-label {
+  font-size: 10px;
+  color: rgba(245,240,232,0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.sensor-valor {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.sensor-valor.temp-ok { color: #81c784; }
+.sensor-valor.temp-alta { color: #ffb74d; }
+.sensor-valor.temp-critica { color: #ef9a9a; }
+.sensor-valor.umid-ok { color: #90caf9; }
+.sensor-valor.umid-alta { color: #ffb74d; }
+.sensor-valor.nivel-ok { color: var(--amarelo-claro); }
+.sensor-valor.nivel-baixo { color: #ef9a9a; }
+
+.sensor-unidade {
+  font-size: 10px;
+  color: rgba(245,240,232,0.4);
+}
+
+/* Barra de nível */
+.nivel-barra-container {
+  background: rgba(0,0,0,0.2);
+  border-radius: 6px;
+  height: 8px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.nivel-barra {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.nivel-barra.alto { background: linear-gradient(90deg, var(--amarelo), var(--amarelo-dourado)); }
+.nivel-barra.medio { background: linear-gradient(90deg, #66bb6a, #81c784); }
+.nivel-barra.baixo { background: linear-gradient(90deg, #f44336, #ef9a9a); }
+
+.ventilacao-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(33,150,243,0.12);
+  border: 1px solid rgba(33,150,243,0.25);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #90caf9;
+  margin-top: 10px;
+}
+
+.ventilador-icone {
+  font-size: 16px;
+  animation: girar 1s linear infinite;
+}
+
+@keyframes girar {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Tela de detalhe do silo */
+#tela-detalhe { display: none; }
+#tela-dashboard { display: block; }
+#tela-historico { display: none; }
+#tela-gerenciar { display: none; }
+
+.btn-voltar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(200,146,42,0.08);
+  border: 1px solid rgba(200,146,42,0.2);
+  border-radius: 10px;
+  color: var(--amarelo-claro);
+  padding: 8px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 20px;
+}
+
+.btn-voltar:hover { background: rgba(200,146,42,0.15); }
+
+.detalhe-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.card-grande {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(200,146,42,0.15);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.card-grande h3 {
+  font-size: 13px;
+  color: rgba(245,240,232,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.gauge-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gauge-valor-grande {
+  font-family: 'Playfair Display', serif;
+  font-size: 56px;
+  color: var(--branco);
+  line-height: 1;
+}
+
+.gauge-unidade {
+  font-size: 20px;
+  color: rgba(245,240,232,0.5);
+}
+
+.gauge-label {
+  font-size: 13px;
+  color: rgba(245,240,232,0.4);
+  margin-top: 8px;
+}
+
+.nivel-visual {
+  width: 100%;
+  height: 140px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px;
+  border: 1px solid rgba(200,146,42,0.15);
+  overflow: hidden;
+  position: relative;
+}
+
+.nivel-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, rgba(200,146,42,0.4), rgba(200,146,42,0.7));
+  transition: height 0.8s ease;
+  border-radius: 0 0 9px 9px;
+}
+
+.nivel-texto {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--branco);
+  z-index: 1;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+/* Histórico */
+.historico-table-wrapper {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(200,146,42,0.12);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.historico-filtros {
+  display: flex;
+  gap: 10px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(200,146,42,0.1);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.historico-filtros select {
+  padding: 8px 14px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(200,146,42,0.2);
+  border-radius: 8px;
+  color: var(--branco);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  outline: none;
+}
+
+.historico-filtros select option { background: #1a3d1f; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(245,240,232,0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  background: rgba(0,0,0,0.15);
+  border-bottom: 1px solid rgba(200,146,42,0.1);
+}
+
+td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: rgba(245,240,232,0.8);
+  border-bottom: 1px solid rgba(200,146,42,0.06);
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(200,146,42,0.04); }
+
+td.temp-alta { color: #ffb74d; }
+td.temp-ok { color: #81c784; }
+td.vent-ativo { color: #90caf9; }
+td.vent-inativo { color: rgba(245,240,232,0.4); }
+
+/* Gerenciar silos */
+.gerenciar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.silo-gerenciar-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(200,146,42,0.15);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.silo-gerenciar-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--branco);
+  margin-bottom: 6px;
+}
+
+.silo-gerenciar-card p {
+  font-size: 12px;
+  color: rgba(245,240,232,0.4);
+  margin-bottom: 16px;
+}
+
+.btn-editar-silo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(200,146,42,0.1);
+  border: 1px solid rgba(200,146,42,0.2);
+  border-radius: 8px;
+  color: var(--amarelo-claro);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-editar-silo:hover { background: rgba(200,146,42,0.2); }
+
+.card-adicionar-silo {
+  background: rgba(200,146,42,0.04);
+  border: 1px dashed rgba(200,146,42,0.25);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 130px;
+}
+
+.card-adicionar-silo:hover {
+  background: rgba(200,146,42,0.1);
+  border-color: rgba(200,146,42,0.5);
+}
+
+.card-adicionar-silo span { font-size: 30px; }
+.card-adicionar-silo p {
+  font-size: 13px;
+  color: rgba(245,240,232,0.5);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  display: none;
+}
+
+.modal-overlay.aberto { display: flex; }
+
+.modal-box {
+  background: #1e4025;
+  border: 1px solid rgba(200,146,42,0.3);
+  border-radius: 18px;
+  padding: 32px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.modal-box h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--amarelo-dourado);
+  margin-bottom: 20px;
+}
+
+.modal-acoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-cancelar {
+  flex: 1;
+  padding: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: rgba(245,240,232,0.6);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancelar:hover { background: rgba(255,255,255,0.1); }
+
+/* Gráfico histórico inline */
+.grafico-sensores {
+  height: 200px;
+  position: relative;
+  margin-top: 12px;
+}
+
+.grafico-sensores canvas {
+  width: 100% !important;
+}
+
+/* Notificação toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #1e4025;
+  border: 1px solid rgba(200,146,42,0.4);
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: 14px;
+  color: var(--branco);
+  z-index: 9999;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s;
+  max-width: 320px;
+}
+
+.toast.visivel {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast.alerta-toast { border-color: rgba(255,152,0,0.5); background: #2d1f00; }
+.toast.sucesso-toast { border-color: rgba(76,175,80,0.5); background: #0a2d0e; }
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-260px); }
+  .sidebar.aberta { transform: translateX(0); }
+  .main-content { margin-left: 0; padding: 16px; }
+  .detalhe-grid { grid-template-columns: 1fr; }
+  .menu-toggle { display: flex; }
+}
+
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 16px; left: 16px;
+  z-index: 200;
+  background: var(--verde-medio);
+  border: 1px solid rgba(200,146,42,0.3);
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* Gráfico mini */
+.mini-grafico {
+  height: 40px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+.mini-barra {
+  flex: 1;
+  border-radius: 2px 2px 0 0;
+  min-height: 4px;
+  transition: height 0.3s;
+}
+</style>
+</head>
+<body>
+
+<!-- TELA LOGIN -->
+<div id="tela-login">
+  <div class="login-box">
+    <div class="logo-area">
+      <div class="logo-icon">🌾</div>
+      <h1>Silos Inteligentes</h1>
+      <p>Monitoramento agrícola em tempo real</p>
+    </div>
+
+    <div class="tabs-login">
+      <button class="tab-btn ativo" onclick="alternarTab('entrar')">Entrar</button>
+      <button class="tab-btn" onclick="alternarTab('cadastrar')">Cadastrar</button>
+    </div>
+
+    <div id="msg-erro" class="mensagem-erro"></div>
+
+    <!-- Form Entrar -->
+    <div id="form-entrar">
+      <div class="campo">
+        <label>Nome do Agricultor ou Fazenda</label>
+        <input type="text" id="login-nome" placeholder="Ex: João Silva ou Fazenda São Pedro">
+      </div>
+      <div class="campo">
+        <label>Senha</label>
+        <input type="password" id="login-senha" placeholder="••••••••">
+      </div>
+      <button class="btn-principal" onclick="fazerLogin()">Entrar no Sistema</button>
+    </div>
+
+    <!-- Form Cadastrar -->
+    <div id="form-cadastrar" style="display:none">
+      <div class="campo">
+        <label>Seu Nome</label>
+        <input type="text" id="cad-nome" placeholder="Nome do agricultor">
+      </div>
+      <div class="campo">
+        <label>Nome da Fazenda</label>
+        <input type="text" id="cad-fazenda" placeholder="Ex: Fazenda São Pedro">
+      </div>
+      <div class="campo">
+        <label>Senha</label>
+        <input type="password" id="cad-senha" placeholder="Crie uma senha">
+      </div>
+      <div class="campo">
+        <label>Seus Silos <span style="color:rgba(245,240,232,0.4);font-size:11px">(adicione pelo menos 1)</span></label>
+        <div id="silos-cadastro" class="silos-cadastro">
+          <div class="silo-cadastro-item">
+            <input type="text" placeholder="Nome do silo (ex: Silo A)">
+            <button class="btn-remover-silo" onclick="removerSiloCad(this)" style="display:none">×</button>
+          </div>
+        </div>
+        <button class="btn-adicionar-silo" onclick="adicionarSiloCad()">+ Adicionar outro silo</button>
+      </div>
+      <button class="btn-principal" onclick="fazerCadastro()">Criar Conta</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP PRINCIPAL -->
+<div id="app">
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <h1>🌾 Silos Inteligentes</h1>
+      <p id="sb-fazenda">Carregando...</p>
+    </div>
+    <div class="sidebar-usuario">
+      <div class="usuario-badge">
+        <div class="avatar" id="sb-avatar">JA</div>
+        <div class="usuario-info">
+          <div class="usuario-nome" id="sb-nome">Agricultor</div>
+          <div class="fazenda-nome" id="sb-fazenda2">Fazenda</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-secao">
+      <div class="secao-titulo">Navegação</div>
+      <button class="sidebar-item ativo" id="nav-dashboard" onclick="irPara('dashboard')">
+        <span class="sidebar-item-icone">📊</span> Painel Geral
+      </button>
+      <button class="sidebar-item" id="nav-historico" onclick="irPara('historico')">
+        <span class="sidebar-item-icone">📋</span> Histórico
+      </button>
+      <button class="sidebar-item" id="nav-gerenciar" onclick="irPara('gerenciar')">
+        <span class="sidebar-item-icone">⚙️</span> Gerenciar Silos
+      </button>
+
+      <div class="secao-titulo" style="margin-top:16px">Meus Silos</div>
+      <div id="sidebar-silos"></div>
+    </div>
+    <div class="sidebar-rodape">
+      <div style="font-size:11px;color:rgba(245,240,232,0.3);text-align:center;margin-bottom:10px;letter-spacing:0.5px">Logado como <strong style="color:rgba(245,240,232,0.55)" id="sb-nome-rodape"></strong></div>
+      <button class="btn-sair-destaque" onclick="sair()">🚪 Sair da Conta</button>
+      <div style="text-align:center;margin-top:10px">
+        <button class="btn-trocar-conta" onclick="sair()">↩ Entrar com outra conta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <div class="main-content">
+
+    <!-- DASHBOARD -->
+    <div id="tela-dashboard">
+      <div class="topbar">
+        <div class="topbar-titulo">
+          <h2>Painel de Monitoramento</h2>
+          <p id="data-hora-atual">Carregando...</p>
+        </div>
+        <div class="topbar-acoes">
+          <div class="ultimo-update">
+            <div class="pulso"></div>
+            <span>Ao vivo • atualiza em <span id="contador-update">20</span>s</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards-resumo" id="cards-resumo"></div>
+      <div class="silos-grid" id="silos-grid"></div>
+    </div>
+
+    <!-- DETALHE SILO -->
+    <div id="tela-detalhe">
+      <button class="btn-voltar" onclick="irPara('dashboard')">← Voltar ao Painel</button>
+      <div class="topbar">
+        <div class="topbar-titulo">
+          <h2 id="detalhe-titulo">Silo A</h2>
+          <p id="detalhe-sub">Monitoramento detalhado</p>
+        </div>
+        <div id="detalhe-badge-status"></div>
+      </div>
+
+      <div class="detalhe-grid">
+        <div class="card-grande">
+          <h3>🌡️ Temperatura</h3>
+          <div class="gauge-container">
+            <div><span class="gauge-valor-grande" id="det-temp">--</span><span class="gauge-unidade">°C</span></div>
+            <div class="gauge-label" id="det-temp-status">Verificando...</div>
+            <div style="width:100%;margin-top:16px">
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(245,240,232,0.4);margin-bottom:4px">
+                <span>0°C</span><span>Ideal: 15-25°C</span><span>50°C</span>
+              </div>
+              <div style="background:rgba(0,0,0,0.2);border-radius:6px;height:10px;overflow:hidden">
+                <div id="det-temp-barra" style="height:100%;border-radius:6px;transition:width 0.5s;background:linear-gradient(90deg,#4caf50,#ffeb3b,#f44336)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-grande">
+          <h3>💧 Umidade</h3>
+          <div class="gauge-container">
+            <div><span class="gauge-valor-grande" id="det-umid">--</span><span class="gauge-unidade">%</span></div>
+            <div class="gauge-label" id="det-umid-status">Verificando...</div>
+            <div style="width:100%;margin-top:16px">
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(245,240,232,0.4);margin-bottom:4px">
+                <span>0%</span><span>Ideal: 12-14%</span><span>100%</span>
+              </div>
+              <div style="background:rgba(0,0,0,0.2);border-radius:6px;height:10px;overflow:hidden">
+                <div id="det-umid-barra" style="height:100%;border-radius:6px;transition:width 0.5s;background:linear-gradient(90deg,#ff9800,#2196f3,#1565c0)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-grande">
+          <h3>📦 Nível do Silo</h3>
+          <div class="nivel-visual">
+            <div class="nivel-fill" id="det-nivel-fill" style="height:60%"></div>
+            <div class="nivel-texto" id="det-nivel-texto">60%</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:12px;color:rgba(245,240,232,0.4)">
+            <span>Vazio</span><span>Capacidade Total</span>
+          </div>
+        </div>
+        <div class="card-grande">
+          <h3>💨 Sistema de Ventilação</h3>
+          <div id="vent-status-detalhe" style="text-align:center;padding:20px 0">
+            <div style="font-size:48px;margin-bottom:10px" id="vent-icone-det">💨</div>
+            <div style="font-size:20px;font-weight:600" id="vent-texto-det">Verificando...</div>
+            <div style="font-size:13px;color:rgba(245,240,232,0.4);margin-top:8px" id="vent-motivo-det"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico histórico do silo -->
+      <div class="card-grande" style="margin-bottom:24px">
+        <h3>📈 Histórico das últimas leituras</h3>
+        <div class="grafico-sensores">
+          <canvas id="grafico-detalhe" role="img" aria-label="Gráfico de temperatura e umidade das últimas leituras">Histórico de temperatura e umidade do silo.</canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div id="tela-historico">
+      <div class="topbar">
+        <div class="topbar-titulo">
+          <h2>Histórico de Leituras</h2>
+          <p>Registro completo de todos os sensores</p>
+        </div>
+      </div>
+      <div class="historico-table-wrapper">
+        <div class="historico-filtros">
+          <label style="font-size:13px;color:rgba(245,240,232,0.5)">Filtrar por silo:</label>
+          <select id="filtro-silo" onchange="renderHistorico()">
+            <option value="todos">Todos os silos</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Data/Hora</th>
+                <th>Silo</th>
+                <th>Temperatura</th>
+                <th>Umidade</th>
+                <th>Nível</th>
+                <th>Ventilação</th>
+              </tr>
+            </thead>
+            <tbody id="historico-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- GERENCIAR -->
+    <div id="tela-gerenciar">
+      <div class="topbar">
+        <div class="topbar-titulo">
+          <h2>Gerenciar Silos</h2>
+          <p>Adicione, edite ou remova seus silos</p>
+        </div>
+      </div>
+      <div class="gerenciar-grid" id="gerenciar-grid"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL ADICIONAR SILO -->
+<div class="modal-overlay" id="modal-adicionar">
+  <div class="modal-box">
+    <h3>Novo Silo</h3>
+    <div class="campo">
+      <label>Nome do Silo</label>
+      <input type="text" id="novo-silo-nome" placeholder="Ex: Silo C, Silo Norte...">
+    </div>
+    <div class="modal-acoes">
+      <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-principal" style="flex:1" onclick="adicionarNovoSilo()">Adicionar Silo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR SILO -->
+<div class="modal-overlay" id="modal-editar">
+  <div class="modal-box">
+    <h3>Editar Silo</h3>
+    <input type="hidden" id="editar-silo-idx">
+    <div class="campo">
+      <label>Nome do Silo</label>
+      <input type="text" id="editar-silo-nome" placeholder="Nome do silo">
+    </div>
+    <div class="modal-acoes">
+      <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-principal" style="flex:1" onclick="salvarEdicaoSilo()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ====== ESTADO DA APLICAÇÃO ======
+let usuarios = JSON.parse(localStorage.getItem('si_usuarios') || '[]');
+let usuarioAtual = JSON.parse(localStorage.getItem('si_usuario_atual') || 'null');
+let dadosSensores = {};
+let historico = JSON.parse(localStorage.getItem('si_historico') || '{}');
+let siloSelecionado = null;
+let intervaloSimulacao = null;
+let contadorUpdate = 20;
+let graficodetalhe = null;
+
+// ====== INICIALIZAÇÃO ======
+window.onload = function() {
+  if (usuarioAtual) {
+    iniciarApp();
+  }
+};
+
+// ====== LOGIN/CADASTRO ======
+function alternarTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('ativo', (i === 0 && tab === 'entrar') || (i === 1 && tab === 'cadastrar'));
+  });
+  document.getElementById('form-entrar').style.display = tab === 'entrar' ? 'block' : 'none';
+  document.getElementById('form-cadastrar').style.display = tab === 'cadastrar' ? 'block' : 'none';
+  document.getElementById('msg-erro').style.display = 'none';
+}
+
+function mostrarErro(msg) {
+  const el = document.getElementById('msg-erro');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function fazerLogin() {
+  const nome = document.getElementById('login-nome').value.trim();
+  const senha = document.getElementById('login-senha').value;
+  if (!nome || !senha) { mostrarErro('Preencha todos os campos.'); return; }
+  const u = usuarios.find(u =>
+    (u.nome.toLowerCase() === nome.toLowerCase() || u.fazenda.toLowerCase() === nome.toLowerCase()) && u.senha === senha
+  );
+  if (!u) { mostrarErro('Agricultor não encontrado ou senha incorreta.'); return; }
+  usuarioAtual = u;
+  localStorage.setItem('si_usuario_atual', JSON.stringify(u));
+  iniciarApp();
+}
+
+function adicionarSiloCad() {
+  const cont = document.getElementById('silos-cadastro');
+  const div = document.createElement('div');
+  div.className = 'silo-cadastro-item';
+  div.innerHTML = `<input type="text" placeholder="Nome do silo (ex: Silo B)"><button class="btn-remover-silo" onclick="removerSiloCad(this)">×</button>`;
+  cont.appendChild(div);
+  atualizarBotoesCad();
+}
+
+function removerSiloCad(btn) {
+  btn.parentElement.remove();
+  atualizarBotoesCad();
+}
+
+function atualizarBotoesCad() {
+  const items = document.querySelectorAll('#silos-cadastro .silo-cadastro-item');
+  items.forEach((item, i) => {
+    const btn = item.querySelector('.btn-remover-silo');
+    btn.style.display = items.length > 1 ? 'block' : 'none';
+  });
+}
+
+function fazerCadastro() {
+  const nome = document.getElementById('cad-nome').value.trim();
+  const fazenda = document.getElementById('cad-fazenda').value.trim();
+  const senha = document.getElementById('cad-senha').value;
+  const nomesSilos = [...document.querySelectorAll('#silos-cadastro input')].map(i => i.value.trim()).filter(Boolean);
+
+  if (!nome || !fazenda || !senha) { mostrarErro('Preencha todos os campos.'); return; }
+  if (nomesSilos.length === 0) { mostrarErro('Adicione pelo menos um silo.'); return; }
+  if (usuarios.find(u => u.nome.toLowerCase() === nome.toLowerCase() || u.fazenda.toLowerCase() === fazenda.toLowerCase())) {
+    mostrarErro('Já existe um cadastro com esse nome ou fazenda.'); return;
+  }
+
+  const silos = nomesSilos.map((n, i) => ({ id: i, nome: n, criado: new Date().toISOString() }));
+  const u = { nome, fazenda, senha, silos };
+  usuarios.push(u);
+  localStorage.setItem('si_usuarios', JSON.stringify(usuarios));
+  usuarioAtual = u;
+  localStorage.setItem('si_usuario_atual', JSON.stringify(u));
+  mostrarToast('Conta criada com sucesso! Bem-vindo(a), ' + nome + '! 🌾', 'sucesso-toast');
+  iniciarApp();
+}
+
+// ====== APP ======
+function iniciarApp() {
+  document.getElementById('tela-login').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  atualizarSidebar();
+  iniciarSimulacao();
+  irPara('dashboard');
+  atualizarRelogio();
+  setInterval(atualizarRelogio, 1000);
+}
+
+function sair() {
+  clearInterval(intervaloSimulacao);
+  localStorage.removeItem('si_usuario_atual');
+  usuarioAtual = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('tela-login').style.display = 'flex';
+}
+
+function atualizarRelogio() {
+  const agora = new Date();
+  document.getElementById('data-hora-atual').textContent =
+    agora.toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long', year:'numeric' }) +
+    ' • ' + agora.toLocaleTimeString('pt-BR');
+}
+
+function atualizarSidebar() {
+  const u = usuarioAtual;
+  document.getElementById('sb-fazenda').textContent = u.fazenda;
+  document.getElementById('sb-nome').textContent = u.nome;
+  document.getElementById('sb-fazenda2').textContent = u.fazenda;
+  document.getElementById('sb-avatar').textContent = u.nome.substring(0, 2).toUpperCase();
+  const rodapeNome = document.getElementById('sb-nome-rodape');
+  if (rodapeNome) rodapeNome.textContent = u.nome;
+
+  const cont = document.getElementById('sidebar-silos');
+  cont.innerHTML = '';
+  u.silos.forEach(silo => {
+    const d = dadosSensores[silo.id];
+    const status = d ? getStatus(d) : 'ok';
+    const btn = document.createElement('button');
+    btn.className = 'sidebar-item';
+    btn.id = 'sb-silo-' + silo.id;
+    btn.innerHTML = `<span class="sidebar-item-icone">🏛️</span> ${silo.nome} <span class="status-dot ${status}" style="margin-left:auto"></span>`;
+    btn.onclick = () => abrirSilo(silo.id);
+    cont.appendChild(btn);
+  });
+}
+
+function getStatus(d) {
+  if (d.temp > 35) return 'critico';
+  if (d.temp > 28 || d.umid > 16) return 'alerta';
+  return 'ok';
+}
+
+// ====== SIMULAÇÃO ======
+function iniciarSimulacao() {
+  usuarioAtual.silos.forEach(silo => {
+    if (!dadosSensores[silo.id]) {
+      dadosSensores[silo.id] = {
+        temp: 20 + Math.random() * 10,
+        umid: 12 + Math.random() * 4,
+        nivel: 40 + Math.random() * 55,
+        ventilacao: false
+      };
+    }
+  });
+  if (!historico[usuarioAtual.nome]) historico[usuarioAtual.nome] = [];
+  registrarHistorico();
+  renderDashboard();
+  atualizarSidebar();
+
+  contadorUpdate = 20;
+  clearInterval(intervaloSimulacao);
+  intervaloSimulacao = setInterval(() => {
+    contadorUpdate--;
+    const el = document.getElementById('contador-update');
+    if (el) el.textContent = contadorUpdate;
+    if (contadorUpdate <= 0) {
+      simularLeitura();
+      contadorUpdate = 20;
+    }
+  }, 1000);
+}
+
+function simularLeitura() {
+  usuarioAtual.silos.forEach(silo => {
+    const d = dadosSensores[silo.id];
+    // Variação realista com chance de anomalia
+    const variTemp = (Math.random() - 0.45) * 3;
+    const variUmid = (Math.random() - 0.48) * 1.5;
+    const variNivel = (Math.random() - 0.52) * 2;
+
+    d.temp = Math.max(10, Math.min(45, d.temp + variTemp));
+    d.umid = Math.max(8, Math.min(25, d.umid + variUmid));
+    d.nivel = Math.max(5, Math.min(100, d.nivel + variNivel));
+
+    // Lógica de ventilação automática
+    if (d.temp > 28 && !d.ventilacao) {
+      d.ventilacao = true;
+      mostrarToast(`⚠️ Ventilação ativada no ${silo.nome}! Temperatura: ${d.temp.toFixed(1)}°C`, 'alerta-toast');
+    } else if (d.temp <= 24 && d.ventilacao) {
+      d.ventilacao = false;
+      mostrarToast(`✅ Ventilação desligada no ${silo.nome}. Temperatura normalizada.`, 'sucesso-toast');
+    }
+
+    // Se ventilação ativa, temperatura cai mais rápido
+    if (d.ventilacao) {
+      d.temp = Math.max(10, d.temp - 0.8);
+    }
+  });
+
+  registrarHistorico();
+  renderDashboard();
+  atualizarSidebar();
+
+  // Atualizar tela de detalhe se aberta
+  if (siloSelecionado !== null) {
+    renderDetalhe(siloSelecionado);
+  }
+}
+
+function registrarHistorico() {
+  const chave = usuarioAtual.nome;
+  if (!historico[chave]) historico[chave] = [];
+  const agora = new Date();
+  usuarioAtual.silos.forEach(silo => {
+    const d = dadosSensores[silo.id];
+    historico[chave].unshift({
+      ts: agora.toISOString(),
+      siloId: silo.id,
+      siloNome: silo.nome,
+      temp: +d.temp.toFixed(1),
+      umid: +d.umid.toFixed(1),
+      nivel: +d.nivel.toFixed(1),
+      ventilacao: d.ventilacao
+    });
+  });
+  // Manter histórico em no máximo 500 registros por usuário
+  if (historico[chave].length > 500) historico[chave] = historico[chave].slice(0, 500);
+  localStorage.setItem('si_historico', JSON.stringify(historico));
+}
+
+// ====== DASHBOARD ======
+function renderDashboard() {
+  if (!usuarioAtual) return;
+  const silos = usuarioAtual.silos;
+  const dados = silos.map(s => dadosSensores[s.id]).filter(Boolean);
+
+  // Cards resumo
+  const tempMedia = dados.length ? (dados.reduce((a,d) => a+d.temp,0)/dados.length) : 0;
+  const umidMedia = dados.length ? (dados.reduce((a,d) => a+d.umid,0)/dados.length) : 0;
+  const silosAlerta = dados.filter(d => getStatus(d) !== 'ok').length;
+  const ventsAtivas = dados.filter(d => d.ventilacao).length;
+
+  document.getElementById('cards-resumo').innerHTML = `
+    <div class="card-resumo amarelo">
+      <div class="card-resumo-label">Total de Silos</div>
+      <div class="card-resumo-valor">${silos.length}</div>
+      <div class="card-resumo-sub">monitorados ao vivo</div>
+    </div>
+    <div class="card-resumo ${tempMedia > 28 ? 'laranja' : 'verde'}">
+      <div class="card-resumo-label">Temp. Média</div>
+      <div class="card-resumo-valor">${tempMedia.toFixed(1)}°</div>
+      <div class="card-resumo-sub">média de todos os silos</div>
+    </div>
+    <div class="card-resumo azul">
+      <div class="card-resumo-label">Umidade Média</div>
+      <div class="card-resumo-valor">${umidMedia.toFixed(1)}%</div>
+      <div class="card-resumo-sub">média de todos os silos</div>
+    </div>
+    <div class="card-resumo ${silosAlerta > 0 ? 'laranja' : 'verde'}">
+      <div class="card-resumo-label">Silos em Alerta</div>
+      <div class="card-resumo-valor">${silosAlerta}</div>
+      <div class="card-resumo-sub">${ventsAtivas} ventilação ativa</div>
+    </div>
+  `;
+
+  // Cards de silos
+  const grid = document.getElementById('silos-grid');
+  grid.innerHTML = '';
+  silos.forEach(silo => {
+    const d = dadosSensores[silo.id];
+    if (!d) return;
+    const status = getStatus(d);
+    const statusLabel = d.ventilacao ? 'Ventilando' : (status === 'ok' ? 'Normal' : (status === 'alerta' ? 'Atenção' : 'Crítico'));
+    const statusClass = d.ventilacao ? 'ventilacao' : status;
+
+    const tempClass = d.temp > 35 ? 'temp-critica' : (d.temp > 28 ? 'temp-alta' : 'temp-ok');
+    const umidClass = d.umid > 16 ? 'umid-alta' : 'umid-ok';
+    const nivelClass = d.nivel < 20 ? 'nivel-baixo' : 'nivel-ok';
+    const nivelBarraClass = d.nivel > 60 ? 'alto' : (d.nivel > 30 ? 'medio' : 'baixo');
+
+    const div = document.createElement('div');
+    div.className = 'silo-card';
+    div.onclick = () => abrirSilo(silo.id);
+    div.innerHTML = `
+      <div class="silo-card-header">
+        <div class="silo-card-nome">
+          <div class="silo-icone">🏛️</div>
+          <div>
+            <div class="silo-card-titulo">${silo.nome}</div>
+            <div class="silo-card-id">ID #${silo.id + 1}</div>
+          </div>
+        </div>
+        <span class="badge-status ${statusClass}">${statusLabel}</span>
+      </div>
+      <div class="silo-card-body">
+        <div class="sensores-linha">
+          <div class="sensor-item">
+            <div class="sensor-label">🌡️ Temp.</div>
+            <div class="sensor-valor ${tempClass}">${d.temp.toFixed(1)}<span class="sensor-unidade">°C</span></div>
+          </div>
+          <div class="sensor-item">
+            <div class="sensor-label">💧 Umidade</div>
+            <div class="sensor-valor ${umidClass}">${d.umid.toFixed(1)}<span class="sensor-unidade">%</span></div>
+          </div>
+          <div class="sensor-item">
+            <div class="sensor-label">📦 Nível</div>
+            <div class="sensor-valor ${nivelClass}">${d.nivel.toFixed(0)}<span class="sensor-unidade">%</span></div>
+          </div>
+        </div>
+        <div class="nivel-barra-container">
+          <div class="nivel-barra ${nivelBarraClass}" style="width:${d.nivel}%"></div>
+        </div>
+        ${d.ventilacao ? `<div class="ventilacao-banner"><span class="ventilador-icone">🌀</span> Ventilação automática ativa — resfriando o silo</div>` : ''}
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+// ====== DETALHE DO SILO ======
+function abrirSilo(siloId) {
+  siloSelecionado = siloId;
+  irPara('detalhe');
+  renderDetalhe(siloId);
+}
+
+function renderDetalhe(siloId) {
+  const silo = usuarioAtual.silos.find(s => s.id === siloId);
+  const d = dadosSensores[siloId];
+  if (!silo || !d) return;
+
+  document.getElementById('detalhe-titulo').textContent = silo.nome;
+  document.getElementById('detalhe-sub').textContent = 'Monitoramento detalhado em tempo real';
+
+  const status = getStatus(d);
+  const statusLabel = d.ventilacao ? 'Ventilando' : (status === 'ok' ? 'Normal' : (status === 'alerta' ? 'Atenção' : 'Crítico'));
+  document.getElementById('detalhe-badge-status').innerHTML = `<span class="badge-status ${d.ventilacao ? 'ventilacao' : status}">${statusLabel}</span>`;
+
+  // Temperatura
+  document.getElementById('det-temp').textContent = d.temp.toFixed(1);
+  document.getElementById('det-temp').className = 'gauge-valor-grande ' + (d.temp > 35 ? 'temp-critica' : (d.temp > 28 ? 'temp-alta' : 'temp-ok'));
+  document.getElementById('det-temp-status').textContent = d.temp > 35 ? '⚠️ Temperatura crítica!' : (d.temp > 28 ? '⚠️ Temperatura elevada' : '✅ Temperatura ideal');
+  document.getElementById('det-temp-barra').style.width = Math.min(100, (d.temp / 50) * 100) + '%';
+
+  // Umidade
+  document.getElementById('det-umid').textContent = d.umid.toFixed(1);
+  document.getElementById('det-umid').className = 'gauge-valor-grande ' + (d.umid > 16 ? 'umid-alta' : 'umid-ok');
+  document.getElementById('det-umid-status').textContent = d.umid > 16 ? '⚠️ Umidade alta, risco de fungos' : (d.umid < 11 ? '⚠️ Umidade baixa' : '✅ Umidade ideal');
+  document.getElementById('det-umid-barra').style.width = d.umid + '%';
+
+  // Nível
+  document.getElementById('det-nivel-fill').style.height = d.nivel + '%';
+  document.getElementById('det-nivel-texto').textContent = d.nivel.toFixed(0) + '%';
+
+  // Ventilação
+  if (d.ventilacao) {
+    document.getElementById('vent-icone-det').textContent = '🌀';
+    document.getElementById('vent-icone-det').style.animation = 'girar 1s linear infinite';
+    document.getElementById('vent-texto-det').textContent = 'Ventilação ATIVA';
+    document.getElementById('vent-texto-det').style.color = '#90caf9';
+    document.getElementById('vent-motivo-det').textContent = `Ativada automaticamente — temp. ${d.temp.toFixed(1)}°C > 28°C`;
+  } else {
+    document.getElementById('vent-icone-det').textContent = '💤';
+    document.getElementById('vent-icone-det').style.animation = 'none';
+    document.getElementById('vent-texto-det').textContent = 'Ventilação desligada';
+    document.getElementById('vent-texto-det').style.color = 'rgba(245,240,232,0.4)';
+    document.getElementById('vent-motivo-det').textContent = 'Temperatura dentro do limite seguro';
+  }
+
+  // Gráfico
+  renderGraficoDetalhe(siloId);
+}
+
+function renderGraficoDetalhe(siloId) {
+  const chave = usuarioAtual.nome;
+  const hist = (historico[chave] || []).filter(h => h.siloId === siloId).slice(0, 15).reverse();
+
+  const labels = hist.map(h => {
+    const d = new Date(h.ts);
+    return d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  });
+  const temps = hist.map(h => h.temp);
+  const umids = hist.map(h => h.umid);
+
+  if (graficodetalhe) { graficodetalhe.destroy(); graficodetalhe = null; }
+  const ctx = document.getElementById('grafico-detalhe').getContext('2d');
+  graficodetalhe = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Temperatura (°C)',
+          data: temps,
+          borderColor: '#e0a93a',
+          backgroundColor: 'rgba(224,169,58,0.1)',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: true,
+          pointRadius: 3,
+          pointBackgroundColor: '#e0a93a'
+        },
+        {
+          label: 'Umidade (%)',
+          data: umids,
+          borderColor: '#90caf9',
+          backgroundColor: 'rgba(144,202,249,0.1)',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: true,
+          pointRadius: 3,
+          pointBackgroundColor: '#90caf9',
+          borderDash: [4, 4]
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: { ticks: { color: 'rgba(245,240,232,0.4)', font: { size: 11 } }, grid: { color: 'rgba(200,146,42,0.08)' } },
+        y: { ticks: { color: 'rgba(245,240,232,0.4)', font: { size: 11 } }, grid: { color: 'rgba(200,146,42,0.08)' } }
+      }
+    }
+  });
+}
+
+// ====== HISTÓRICO ======
+function renderHistorico() {
+  const chave = usuarioAtual.nome;
+  const todos = historico[chave] || [];
+  const filtro = document.getElementById('filtro-silo').value;
+
+  // Preencher select
+  const sel = document.getElementById('filtro-silo');
+  const valAtual = sel.value;
+  sel.innerHTML = '<option value="todos">Todos os silos</option>';
+  usuarioAtual.silos.forEach(s => {
+    sel.innerHTML += `<option value="${s.id}">${s.nome}</option>`;
+  });
+  sel.value = valAtual;
+
+  const filtrado = filtro === 'todos' ? todos : todos.filter(h => String(h.siloId) === filtro);
+
+  const tbody = document.getElementById('historico-tbody');
+  tbody.innerHTML = '';
+
+  if (filtrado.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:rgba(245,240,232,0.3);padding:32px">Nenhum registro ainda.</td></tr>';
+    return;
+  }
+
+  filtrado.slice(0, 100).forEach(h => {
+    const d = new Date(h.ts);
+    const hora = d.toLocaleString('pt-BR');
+    const tempClass = h.temp > 35 ? 'temp-alta' : (h.temp > 28 ? 'temp-alta' : 'temp-ok');
+    const ventClass = h.ventilacao ? 'vent-ativo' : 'vent-inativo';
+    tbody.innerHTML += `
+      <tr>
+        <td>${hora}</td>
+        <td>${h.siloNome}</td>
+        <td class="${tempClass}">${h.temp}°C</td>
+        <td>${h.umid}%</td>
+        <td>${h.nivel}%</td>
+        <td class="${ventClass}">${h.ventilacao ? '🌀 Ativa' : '— Inativa'}</td>
+      </tr>
+    `;
+  });
+}
+
+// ====== GERENCIAR SILOS ======
+function renderGerenciar() {
+  const grid = document.getElementById('gerenciar-grid');
+  grid.innerHTML = '';
+  usuarioAtual.silos.forEach((silo, idx) => {
+    const div = document.createElement('div');
+    div.className = 'silo-gerenciar-card';
+    div.innerHTML = `
+      <h3>🏛️ ${silo.nome}</h3>
+      <p>Cadastrado em: ${new Date(silo.criado).toLocaleDateString('pt-BR')}</p>
+      <button class="btn-editar-silo" onclick="abrirEdicaoSilo(${idx})">✏️ Renomear silo</button>
+    `;
+    grid.appendChild(div);
+  });
+
+  // Botão adicionar
+  const add = document.createElement('div');
+  add.className = 'card-adicionar-silo';
+  add.onclick = () => document.getElementById('modal-adicionar').classList.add('aberto');
+  add.innerHTML = '<span>➕</span><p>Registrar novo silo</p>';
+  grid.appendChild(add);
+}
+
+function abrirEdicaoSilo(idx) {
+  document.getElementById('editar-silo-idx').value = idx;
+  document.getElementById('editar-silo-nome').value = usuarioAtual.silos[idx].nome;
+  document.getElementById('modal-editar').classList.add('aberto');
+}
+
+function salvarEdicaoSilo() {
+  const idx = parseInt(document.getElementById('editar-silo-idx').value);
+  const novoNome = document.getElementById('editar-silo-nome').value.trim();
+  if (!novoNome) return;
+  usuarioAtual.silos[idx].nome = novoNome;
+  salvarUsuario();
+  fecharModal();
+  renderGerenciar();
+  atualizarSidebar();
+  mostrarToast('Silo renomeado com sucesso!', 'sucesso-toast');
+}
+
+function adicionarNovoSilo() {
+  const nome = document.getElementById('novo-silo-nome').value.trim();
+  if (!nome) return;
+  const novoId = usuarioAtual.silos.length > 0 ? Math.max(...usuarioAtual.silos.map(s => s.id)) + 1 : 0;
+  usuarioAtual.silos.push({ id: novoId, nome, criado: new Date().toISOString() });
+  dadosSensores[novoId] = {
+    temp: 20 + Math.random() * 8,
+    umid: 12 + Math.random() * 3,
+    nivel: 40 + Math.random() * 50,
+    ventilacao: false
+  };
+  salvarUsuario();
+  fecharModal();
+  renderGerenciar();
+  atualizarSidebar();
+  mostrarToast('Novo silo "' + nome + '" adicionado!', 'sucesso-toast');
+}
+
+function salvarUsuario() {
+  const idx = usuarios.findIndex(u => u.nome === usuarioAtual.nome);
+  if (idx >= 0) {
+    usuarios[idx] = usuarioAtual;
+    localStorage.setItem('si_usuarios', JSON.stringify(usuarios));
+    localStorage.setItem('si_usuario_atual', JSON.stringify(usuarioAtual));
+  }
+}
+
+function fecharModal() {
+  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('aberto'));
+  document.getElementById('novo-silo-nome').value = '';
+}
+
+// ====== NAVEGAÇÃO ======
+function irPara(tela) {
+  ['dashboard','detalhe','historico','gerenciar'].forEach(t => {
+    document.getElementById('tela-' + t).style.display = 'none';
+    const nav = document.getElementById('nav-' + t);
+    if (nav) nav.classList.remove('ativo');
+  });
+  document.getElementById('tela-' + tela).style.display = 'block';
+  const nav = document.getElementById('nav-' + tela);
+  if (nav) nav.classList.add('ativo');
+
+  if (tela === 'dashboard') renderDashboard();
+  if (tela === 'historico') renderHistorico();
+  if (tela === 'gerenciar') renderGerenciar();
+  if (tela !== 'detalhe') siloSelecionado = null;
+}
+
+// ====== TOAST ======
+function mostrarToast(msg, tipo) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (tipo || '') + ' visivel';
+  setTimeout(() => t.classList.remove('visivel'), 4000);
+}
+</script>
+</body>
+</html>
